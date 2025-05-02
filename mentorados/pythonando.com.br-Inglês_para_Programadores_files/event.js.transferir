@@ -1,0 +1,67 @@
+btn_envia_comentario = document.getElementById('btn_envia_comentario')
+btn_envia_comentario.addEventListener('click', function(event){ 
+    csrf_token = document.querySelector('[name=csrfmiddlewaretoken]').value
+    comentario = document.getElementById('comentario').value
+    nome = document.getElementById('nome')
+    if(nome != null){
+        nome = nome.value
+    }
+    fetch("/evento/processa_comentario/", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': csrf_token,
+        },
+        body: JSON.stringify({name: nome,
+                              comment: comentario})
+        
+    }).then(function(result){
+        return result.json()
+
+    }).then(function(data){
+        document.getElementById('comentario').value = ""
+        console.log(data['status'])
+
+        if(data['status'] == '1'){
+            erro_comentario = document.getElementById('erro_comentario')
+            div_erro_comentario = document.getElementById('div_erro_comentario')
+            erro_comentario.innerHTML = 'O comentário não pode ser vazio.'
+            div_erro_comentario.style.display = 'block'
+            return 0
+        }else if(data['status'] == '2'){
+            erro_comentario = document.getElementById('erro_comentario')
+            div_erro_comentario = document.getElementById('div_erro_comentario')
+            erro_comentario.innerHTML = 'Erro interno do sistema'
+            div_erro_comentario.style.display = 'block'
+            return 0
+        }else if(data['status'] == '0'){
+            sucesso_comentario = document.getElementById('sucesso_comentario')
+            div_sucesso_comentario = document.getElementById('div_sucesso_comentario')
+            sucesso_comentario.innerHTML = 'Comentário realizado com sucesso'
+            div_sucesso_comentario.style.display = 'block'
+            
+        }
+        div_comentario = document.getElementById('comentarios')
+        div_comentario.innerHTML = ""
+        console.log(data)
+        for(let i = 0; i < data['list_comments'].length; i++){
+            div_comentario.innerHTML += `<div class="bg-maincolor" >
+                                            <div class="bg-differentialcolor py-2 text-left px-6" >
+                                                <h3 class="text-gray-800" >${data['list_comments'][i]['name']}</h3>
+                                            </div>
+                                            <div>
+                                                <p class="text-gray-200 text-left py-2 px-6" >${data['list_comments'][i]['comment']}</p>
+                                            </div>
+                                        </div><br>`
+
+
+        }
+        
+
+
+
+    })
+
+})
+
+

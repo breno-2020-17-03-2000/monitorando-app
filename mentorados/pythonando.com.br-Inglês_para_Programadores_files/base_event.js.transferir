@@ -1,0 +1,110 @@
+btn_logar = document.getElementById("btn_logar")
+
+btn_logar.addEventListener('click', function(event){ 
+    csrf_token = document.querySelector('[name=csrfmiddlewaretoken]').value
+    token_logar = document.getElementById('token_logar').value
+    fetch("/evento/login/", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': csrf_token,
+        },
+        body: JSON.stringify({token_logar: token_logar})
+        
+    }).then(function(result){
+        return result.json()
+
+    }).then(function(data){
+        if(data.status == '1'){
+            mensagem_erro_logar = document.getElementById('mensagem_erro_logar')
+            mensagem_erro_logar.innerHTML = 'Usuário inexistente'
+        }else if(data.status == '3'){
+            mensagem_erro_logar = document.getElementById('mensagem_erro_logar')
+            mensagem_erro_logar.innerHTML = 'Atualize a página e tente novamente'
+
+        }else if(data.status == '0'){
+            document.location.reload(true)
+
+        }
+
+    })
+
+})
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const modal = document.querySelector('.relative.z-10');
+    const backdrop = document.querySelector('.fixed.inset-0.bg-gray-500.bg-opacity-75');
+    const modalPanel = document.querySelector('.relative.transform.transition-all');
+  
+    const openModal = () => {
+      modal.classList.add('ease-out', 'duration-300');
+      modal.classList.remove('opacity-0', 'hidden');
+      modal.classList.add('opacity-100');
+  
+      backdrop.classList.add('ease-out', 'duration-300');
+      backdrop.classList.remove('opacity-0');
+      backdrop.classList.add('opacity-100');
+  
+      modalPanel.classList.add('ease-out', 'duration-300');
+      modalPanel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+      modalPanel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+    };
+  
+    const closeModal = () => {
+      modal.classList.add('ease-in', 'duration-200');
+      modal.classList.remove('opacity-100');
+      modal.classList.add('opacity-0');
+      modal.classList.add('hidden');
+  
+      backdrop.classList.add('ease-in', 'duration-200');
+      backdrop.classList.remove('opacity-100');
+      backdrop.classList.add('opacity-0');
+  
+      modalPanel.classList.add('ease-in', 'duration-200');
+      modalPanel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+      modalPanel.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+    };
+    
+    try{
+        document.querySelector('#btn-login').addEventListener('click', (event) => {
+            openModal();
+        });
+        
+    }catch{
+
+    }
+    try{
+        document.querySelector('#btn-login2').addEventListener('click', (event) => {
+            openModal();
+        });
+    }catch{
+
+    }
+
+    document.querySelector('#btn-fechar-login').addEventListener('click', (event) => {
+
+        closeModal();
+    });
+
+       // Seleciona o botão de abrir menu no modo mobile
+       const menuButton = document.querySelector('header .lg\\:hidden button');
+       // Seleciona o contêiner do menu mobile
+       const mobileMenu = document.querySelector('header .lg\\:hidden[role="dialog"]');
+       // Seleciona o botão de fechar menu no modo mobile
+       const closeButton = document.getElementById('close-menu')
+       // Seleciona o botão de login no menu principal
+       const loginButton = document.getElementById('btn-login');
+     
+       // Adiciona um evento de clique ao botão de abrir menu no modo mobile
+       menuButton.addEventListener('click', function () {
+         // Exibe o menu mobile
+         mobileMenu.style.display = 'block';
+       });
+     
+       // Adiciona um evento de clique ao botão de fechar menu no modo mobile
+       closeButton.addEventListener('click', function () {
+         // Oculta o menu mobile
+         mobileMenu.style.display = 'none';
+       });
+       
+  });
